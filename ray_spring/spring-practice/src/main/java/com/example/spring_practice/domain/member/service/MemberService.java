@@ -8,6 +8,7 @@ import com.example.spring_practice.global.response.CustomException;
 import com.example.spring_practice.global.response.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ public class MemberService {
     private final ImageService imageService;
     private final AuthService authService;
     private final MemberDtoConverter memberDtoConverter;
+    private final PasswordEncoder passwordEncoder;
 
     public void signUp(SignUpRequestDto signUpRequestDto) {
         if(emailDuplicateCheck(signUpRequestDto.getEmail()).isDuplicated()){
@@ -26,7 +28,7 @@ public class MemberService {
         if(nicknameDuplicateCheck(signUpRequestDto.getNickname()).isDuplicated()){
             throw new CustomException(ErrorCode.DUPLICATE_NICKNAME);
         }
-        Member member = new Member(signUpRequestDto.getEmail(), signUpRequestDto.getPassword(), signUpRequestDto.getNickname());
+        Member member = new Member(signUpRequestDto.getEmail(), passwordEncoder.encode(signUpRequestDto.getPassword()), signUpRequestDto.getNickname());
         if(signUpRequestDto.getProfileImage()!=null){
             member.updateImageUrl(imageService.saveImg(signUpRequestDto.getProfileImage()));
         }

@@ -13,6 +13,7 @@ import com.example.spring_practice.global.security.AuthContext;
 import com.example.spring_practice.global.security.JwtUtil;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,13 +23,14 @@ public class AuthService {
     private final MemberRepository memberRepository;
     private final JwtUtil jwtUtil;
     private final MemberDtoConverter memberDtoConverter;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public JwtTokenResponseDto login(LoginRequestDto loginRequestDto) {
         Member member = memberRepository.findByEmail(loginRequestDto.getEmail())
                 .orElseThrow(()->new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
-        if (!member.getPassword().equals(loginRequestDto.getPassword())) {
+        if (!passwordEncoder.matches(loginRequestDto.getPassword(), member.getPassword())) {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
 
