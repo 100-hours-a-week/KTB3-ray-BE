@@ -45,7 +45,7 @@ public class CommentController {
     @Operation(summary = "댓글 불러오기", description = "특정 게시글에 대한 댓글을 불러옵니다.")
     @Parameter(name = "postId", description = "게시글ID", example = "1", required = true)
     @GetMapping
-    public ResponseEntity<ApiResponse<List<CommentResponseDto>>> createComment(@PathVariable Long postId) {
+    public ResponseEntity<ApiResponse<List<CommentResponseDto>>> getComments(@PathVariable Long postId) {
 
         Long currentMemberId = authService.getCurrentMember().getMemberId();
         List<CommentResponseDto> response = commentService.getComments(postId, currentMemberId);

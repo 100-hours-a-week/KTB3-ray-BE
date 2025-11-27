@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,12 +26,14 @@ public class PostService {
     private final PostDtoConverter postDtoConverter;
     private final PostLikeRepository postLikeRepository;
 
-    public List<PostSummaryResponseDto> getPostList() {
+    public List<PostSummaryResponseDto> getPostList(Long currentMemberId) {
         List<Post> posts = postRepository.findAllWithMember();
-
-        return posts.stream()
-                .map(postDtoConverter::toPostSummaryResponseDto)
-                .collect(Collectors.toList());
+        List<PostSummaryResponseDto> postSummaryResponseDtos = new ArrayList<>();
+        for (Post post : posts) {
+            boolean isPostLiked = postLikeRepository.existsByPost_PostIdAndMember_MemberId(post.getPostId(), currentMemberId);
+            postSummaryResponseDtos.add(postDtoConverter.toPostSummaryResponseDto(post, isPostLiked));
+        }
+        return postSummaryResponseDtos;
     }
 
     @Transactional

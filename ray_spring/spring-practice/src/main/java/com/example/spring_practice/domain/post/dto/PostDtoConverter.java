@@ -15,8 +15,7 @@ import java.util.List;
 @Component
 public class PostDtoConverter {
     private final ImageService imageService;
-    private final CommentDtoConverter commentDtoConverter;
-    public PostSummaryResponseDto toPostSummaryResponseDto(Post post){
+    public PostSummaryResponseDto toPostSummaryResponseDto(Post post,boolean isPostLiked){
         return new PostSummaryResponseDto(
                 post.getPostId(),
                 post.getTitle(),
@@ -25,20 +24,21 @@ public class PostDtoConverter {
                 imageService.getFullImgUrl(post.getMember().getProfileImgUrl()),
                 post.getPostLikeList().size(),
                 post.getViewCount(),
-                post.getCommentList().size());
+                post.getCommentList().size(),
+                isPostLiked
+        );
     }
-    public PostDetailsResponseDto toPostDetailsResponseDto(Post post, Long currentMemberId, boolean isPostLiked){
+    public PostDetailsResponseDto toPostDetailsResponseDto(Post post, Long currentMemberId){
         return new PostDetailsResponseDto(
                 imageService.getFullImgUrl(post.getImgUrl()),
                 post.getContent(),
-                post.getMember().getMemberId().equals(currentMemberId),
-                isPostLiked
+                post.getMember().getMemberId().equals(currentMemberId)
         );
     }
     public PostResponseDto toPostResponseDto(Post post, Long currentMemberId, boolean isPostLiked){
         return new PostResponseDto(
-                toPostSummaryResponseDto(post),
-                toPostDetailsResponseDto(post, currentMemberId, isPostLiked)
+                toPostSummaryResponseDto(post, isPostLiked),
+                toPostDetailsResponseDto(post, currentMemberId)
         );
     }
 

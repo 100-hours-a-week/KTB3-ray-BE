@@ -25,4 +25,6 @@ public class PostSummaryResponseDto {
     private long viewCount;
     @Schema(description = "게시글 댓글수", example = "5")
     private long commentCount;
+    @Schema(description = "내가 좋아요 눌렀는지 여부", example = "true")
+    private boolean isPostLiked;
 }

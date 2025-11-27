@@ -30,7 +30,8 @@ public class PostController {
     @Operation(summary = "게시글 목록 불러오기", description = "게시글 목록을 불러옵니다.")
     @GetMapping
     public ResponseEntity<ApiResponse<List<PostSummaryResponseDto>>> getPostList() {
-        List<PostSummaryResponseDto> posts = postService.getPostList();
+        Long currentMemberId = authService.getCurrentMember().getMemberId();
+        List<PostSummaryResponseDto> posts = postService.getPostList(currentMemberId);
         return ResponseEntity.ok(
                 ApiResponse.success(Message.GET_POST_LIST_SUCCESS, posts)
         );
