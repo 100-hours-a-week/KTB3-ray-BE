@@ -51,12 +51,9 @@ public class PostService {
     }
 
     @Transactional
-    public PostIdResponseDto editPost(Long postId, PostRequestDto postRequestDto, Long currentMemberId) {
+    public PostIdResponseDto editPost(Long postId, PostRequestDto postRequestDto) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
-
-        // 권한 확인
-        checkPostPermission(post, currentMemberId);
 
         post.updateTitle(postRequestDto.getTitle());
         post.updateContent(postRequestDto.getContent());
@@ -66,20 +63,11 @@ public class PostService {
         return postDtoConverter.toPostIdResponseDto(post.getPostId());
     }
 
-    public void deletePost(Long postId, Long currentMemberId) {
+    public void deletePost(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
-        // 권한 확인
-        checkPostPermission(post, currentMemberId);
-
         postRepository.delete(post);
-    }
-
-    private void checkPostPermission(Post post, Long currentMemberId) {
-        if(!post.getMember().getMemberId().equals(currentMemberId)) {
-            throw new CustomException(ErrorCode.NO_PERMISSION);
-        }
     }
 
     public void createPostLike(Long postId, Member currentMember) {

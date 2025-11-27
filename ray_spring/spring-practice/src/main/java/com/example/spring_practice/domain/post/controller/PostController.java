@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -63,24 +64,23 @@ public class PostController {
     @Operation(summary = "게시글 수정", description = "게시글을 수정합니다.")
     @Parameter(name = "postId", description = "게시글 ID", example = "1", required = true)
     @PatchMapping(value = "/{postId}", consumes = "multipart/form-data")
+    @PreAuthorize("@authorizationChecker.isPostAuthor(#postId)")
     public ResponseEntity<ApiResponse<PostIdResponseDto>> editPost(
             @PathVariable Long postId,
             @Valid @ModelAttribute PostRequestDto postRequestDto) {
 
-        Long currentMemberId = authService.getCurrentMember().getMemberId();
-
         return ResponseEntity.ok(
                 ApiResponse.success(Message.PATCH_POST_SUCCESS,
-                        postService.editPost(postId, postRequestDto, currentMemberId))
+                        postService.editPost(postId, postRequestDto))
         );
     }
 
     @Operation(summary = "게시글 삭제", description = "게시글을 삭제합니다.")
     @Parameter(name = "postId", description = "게시글 ID", example = "1", required = true)
     @DeleteMapping("/{postId}")
+    @PreAuthorize("@authorizationChecker.isPostAuthor(#postId)")
     public ResponseEntity<ApiResponse<Void>> deletePost(@PathVariable Long postId) {
-        Long currentMemberId = authService.getCurrentMember().getMemberId();
-        postService.deletePost(postId, currentMemberId);
+        postService.deletePost(postId);
         return ResponseEntity.ok(
                 ApiResponse.success(Message.DELETE_POST_SUCCESS)
         );
