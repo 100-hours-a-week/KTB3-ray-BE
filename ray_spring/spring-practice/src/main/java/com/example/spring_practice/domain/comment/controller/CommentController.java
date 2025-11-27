@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,7 +45,7 @@ public class CommentController {
     @Operation(summary = "댓글 불러오기", description = "특정 게시글에 대한 댓글을 불러옵니다.")
     @Parameter(name = "postId", description = "게시글ID", example = "1", required = true)
     @GetMapping
-    public ResponseEntity<ApiResponse<List<CommentResponseDto>>> createComment(@PathVariable Long postId) {
+    public ResponseEntity<ApiResponse<List<CommentResponseDto>>> getComments(@PathVariable Long postId) {
 
         Long currentMemberId = authService.getCurrentMember().getMemberId();
         List<CommentResponseDto> response = commentService.getComments(postId, currentMemberId);
@@ -60,13 +61,12 @@ public class CommentController {
     @Parameter(name = "postId", description = "게시글ID", example = "1", required = true)
     @Parameter(name = "commentId", description = "댓글ID", example = "1", required = true)
     @PatchMapping("/{commentId}")
+    @PreAuthorize("@authorizationChecker.isCommentAuthor(#commentId)")
     public ResponseEntity<ApiResponse<CommentIdResponseDto>> editComment(
             @PathVariable Long postId,
             @PathVariable Long commentId,
             @Valid @RequestBody CommentRequestDto commentRequestDto) {
-
-        Long currentMemberId = authService.getCurrentMember().getMemberId();
-        CommentIdResponseDto response = commentService.updateComment(commentId, commentRequestDto, currentMemberId);
+        CommentIdResponseDto response = commentService.updateComment(commentId, commentRequestDto);
 
         return ResponseEntity.ok(
                 ApiResponse.success(Message.PATCH_COMMENT_SUCCESS, response));
@@ -76,12 +76,11 @@ public class CommentController {
     @Parameter(name = "postId", description = "게시글ID", example = "1", required = true)
     @Parameter(name = "commentId", description = "댓글ID", example = "1", required = true)
     @DeleteMapping("/{commentId}")
+    @PreAuthorize("@authorizationChecker.isCommentAuthor(#commentId)")
     public ResponseEntity<ApiResponse<Void>> deleteComment(
             @PathVariable Long postId,
             @PathVariable Long commentId) {
-
-        Long currentMemberId = authService.getCurrentMember().getMemberId();
-        commentService.deleteComment(commentId, currentMemberId);
+        commentService.deleteComment(commentId);
 
         return ResponseEntity.ok(
                 ApiResponse.success(Message.DELETE_COMMENT_SUCCESS));

@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,12 +26,14 @@ public class PostService {
     private final PostDtoConverter postDtoConverter;
     private final PostLikeRepository postLikeRepository;
 
-    public List<PostSummaryResponseDto> getPostList() {
+    public List<PostSummaryResponseDto> getPostList(Long currentMemberId) {
         List<Post> posts = postRepository.findAllWithMember();
-
-        return posts.stream()
-                .map(postDtoConverter::toPostSummaryResponseDto)
-                .collect(Collectors.toList());
+        List<PostSummaryResponseDto> postSummaryResponseDtos = new ArrayList<>();
+        for (Post post : posts) {
+            boolean isPostLiked = postLikeRepository.existsByPost_PostIdAndMember_MemberId(post.getPostId(), currentMemberId);
+            postSummaryResponseDtos.add(postDtoConverter.toPostSummaryResponseDto(post, isPostLiked));
+        }
+        return postSummaryResponseDtos;
     }
 
     @Transactional
@@ -51,12 +54,9 @@ public class PostService {
     }
 
     @Transactional
-    public PostIdResponseDto editPost(Long postId, PostRequestDto postRequestDto, Long currentMemberId) {
+    public PostIdResponseDto editPost(Long postId, PostRequestDto postRequestDto) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
-
-        // 권한 확인
-        checkPostPermission(post, currentMemberId);
 
         post.updateTitle(postRequestDto.getTitle());
         post.updateContent(postRequestDto.getContent());
@@ -66,20 +66,11 @@ public class PostService {
         return postDtoConverter.toPostIdResponseDto(post.getPostId());
     }
 
-    public void deletePost(Long postId, Long currentMemberId) {
+    public void deletePost(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
-        // 권한 확인
-        checkPostPermission(post, currentMemberId);
-
         postRepository.delete(post);
-    }
-
-    private void checkPostPermission(Post post, Long currentMemberId) {
-        if(!post.getMember().getMemberId().equals(currentMemberId)) {
-            throw new CustomException(ErrorCode.NO_PERMISSION);
-        }
     }
 
     public void createPostLike(Long postId, Member currentMember) {

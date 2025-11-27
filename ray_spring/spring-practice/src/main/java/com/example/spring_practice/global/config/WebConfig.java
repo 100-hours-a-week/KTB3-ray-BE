@@ -10,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-
+/*
     private final JwtInterceptor jwtInterceptor;
 
     public WebConfig(JwtInterceptor jwtInterceptor) {
@@ -22,15 +22,17 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(jwtInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns(
+                        "/**",
                         "/auth/login",
                         "/auth/signup",
                         "/users/email/duplicate-check",
                         "/users/nickname/duplicate-check",
-                        "/users/getalluser",
                         "/images/**",
                         "/swagger", "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/v3/api-docs/**"
                 );
     }
+
+ */
 
     @Value("${file.upload.path}")
     private String uploadPath;

@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ErrorCode {
     // Auth
+    LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "로그인 실패하였습니다."),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "인증되지 않은 사용자 입니다."),
     EXPIRED_ACCESS_TOKEN(HttpStatus.FORBIDDEN, "만료된 엑세스 토큰입니다."),
     INVALID_ACCESS_TOKEN(HttpStatus.FORBIDDEN, "유효하지 않은 엑세스 토큰입니다."),

@@ -16,8 +16,6 @@ public class PostDetailsResponseDto {
     private String content;
     @Schema(description = "내가 작성자인지 여부", example = "true")
     private boolean isMine;
-    @Schema(description = "내가 좋아요 눌렀는지 여부", example = "true")
-    private boolean isPostLiked;
     //@Schema(description = "댓글 목록")
     //private List<CommentResponseDto> comments;
 }

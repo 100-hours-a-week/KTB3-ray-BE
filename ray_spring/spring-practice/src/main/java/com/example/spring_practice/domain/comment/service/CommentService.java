@@ -36,7 +36,6 @@ public class CommentService {
         Member member = memberRepository.findById(currentMemberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
-
         Comment comment = new Comment(commentRequestDto, member, post);
         Comment savedComment = commentRepository.save(comment);
 
@@ -44,12 +43,9 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentIdResponseDto updateComment(Long commentId, CommentRequestDto dto, Long currentMemberId) {
+    public CommentIdResponseDto updateComment(Long commentId, CommentRequestDto dto) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
-
-        // 권한체크
-        checkCommentPermission(comment, currentMemberId);
 
         comment.updateContent(dto.getContent());
 
@@ -57,22 +53,11 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(Long commentId, Long currentMemberId) {
+    public void deleteComment(Long commentId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
 
-        // 권한체크
-        checkCommentPermission(comment, currentMemberId);
-
-        Post post = comment.getPost();
-
         commentRepository.delete(comment);
-    }
-
-    public void checkCommentPermission(Comment comment, Long currentMemberId) {
-        if (!comment.getMember().getMemberId().equals(currentMemberId)) {
-            throw new CustomException(ErrorCode.NO_PERMISSION);
-        }
     }
 
     public List<CommentResponseDto> getComments(Long postId, Long currentMemberId) {
