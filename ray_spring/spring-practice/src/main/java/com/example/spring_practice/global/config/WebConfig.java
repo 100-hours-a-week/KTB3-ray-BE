@@ -42,14 +42,4 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/images/**")  // 👈 이 부분이
                 .addResourceLocations("file:" + uploadPath + "/");
     }
-
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOriginPatterns("*")
-                .allowedMethods("*")
-                .allowedHeaders("*")
-                .allowCredentials(true);
-
-    }
 }
