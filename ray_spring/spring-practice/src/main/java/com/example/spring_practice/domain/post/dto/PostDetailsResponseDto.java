@@ -1,14 +1,13 @@
 package com.example.spring_practice.domain.post.dto;
 
-import com.example.spring_practice.domain.comment.dto.CommentResponseDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
-import java.util.List;
-
-@AllArgsConstructor
 @Getter
+@Builder
+@AllArgsConstructor
 public class PostDetailsResponseDto {
     @Schema(description = "게시물 이미지", example = "https://sample.com")
     private String imgUrl;
