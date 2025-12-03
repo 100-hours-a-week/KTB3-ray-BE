@@ -3,16 +3,14 @@ package com.example.spring_practice.domain.post.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
 public class PostRequestDto {
     @Schema(description = "게시글 제목", example = "돈이 없습니다.", requiredMode = Schema.RequiredMode.REQUIRED)
     @Size(max=26)
