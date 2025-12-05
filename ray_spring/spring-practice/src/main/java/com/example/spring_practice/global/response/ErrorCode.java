@@ -22,6 +22,9 @@ public enum ErrorCode {
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다."),
     NO_PERMISSION(HttpStatus.FORBIDDEN, "수정/삭제 권한이 없습니다."),
 
+    ALLREADY_POST_LIKE(HttpStatus.CONFLICT, "이미 좋아요 한 게시물 입니다."),
+    POST_LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "좋아요 하지 않은 게시물 입니다."),
+
     IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 저장에 실패했습니다"),
     TEST(HttpStatus.FORBIDDEN, "Test");
     private final HttpStatus httpStatus;

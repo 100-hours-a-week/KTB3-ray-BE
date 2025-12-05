@@ -78,11 +78,15 @@ public class PostService {
             Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
             PostLike postLike = new PostLike(currentMember, post);
             postLikeRepository.save(postLike);
+        } else {
+            throw new CustomException(ErrorCode.ALLREADY_POST_LIKE);
         }
     }
 
     @Transactional
     public void deletePostLike(Long postId, Long memberId) {
+        PostLike postLike = postLikeRepository.findByPost_PostIdAndMember_MemberId(postId, memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_LIKE_NOT_FOUND));
         postLikeRepository.deleteByPost_PostIdAndMember_MemberId(postId, memberId);
     }
 }
