@@ -1,9 +1,6 @@
 package com.example.spring_practice.domain.member.service;
 
-import com.example.spring_practice.domain.member.dto.JwtTokenResponseDto;
-import com.example.spring_practice.domain.member.dto.LoginRequestDto;
-import com.example.spring_practice.domain.member.dto.MemberDtoConverter;
-import com.example.spring_practice.domain.member.dto.SignUpRequestDto;
+import com.example.spring_practice.domain.member.dto.*;
 import com.example.spring_practice.domain.member.entity.Member;
 import com.example.spring_practice.domain.member.repository.MemberRepository;
 import com.example.spring_practice.domain.shared.ImageService;
@@ -27,8 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
     private final MemberRepository memberRepository;
     private final JwtUtil jwtUtil;
-    private final MemberDtoConverter memberDtoConverter;
-    private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
     @Transactional
@@ -38,7 +33,7 @@ public class AuthService {
                     new UsernamePasswordAuthenticationToken(loginRequestDto.getEmail(), loginRequestDto.getPassword());
             Authentication authResult = authenticationManager.authenticate(authRequest);
             String token = jwtUtil.generateToken(authResult.getName());
-            return memberDtoConverter.toJwtTokenResponseDto(token);
+            return AuthDtoConverter.toJwtTokenResponseDto(token);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.LOGIN_FAILED);
         }

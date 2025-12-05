@@ -9,29 +9,27 @@ import com.example.spring_practice.domain.post.repository.PostRepository;
 import com.example.spring_practice.domain.shared.ImageService;
 import com.example.spring_practice.global.response.CustomException;
 import com.example.spring_practice.global.response.ErrorCode;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
     private final ImageService imageService;
-    private final PostDtoConverter postDtoConverter;
     private final PostLikeRepository postLikeRepository;
 
+    @Transactional(readOnly = true)
     public List<PostSummaryResponseDto> getPostList(Long currentMemberId) {
         List<Post> posts = postRepository.findAllWithMember();
         List<PostSummaryResponseDto> postSummaryResponseDtos = new ArrayList<>();
         for (Post post : posts) {
             boolean isPostLiked = postLikeRepository.existsByPost_PostIdAndMember_MemberId(post.getPostId(), currentMemberId);
-            postSummaryResponseDtos.add(postDtoConverter.toPostSummaryResponseDto(post, isPostLiked));
+            postSummaryResponseDtos.add(PostDtoConverter.toPostSummaryResponseDto(post, imageService.getFullImgUrl(post.getImgUrl()), isPostLiked));
         }
         return postSummaryResponseDtos;
     }
@@ -42,15 +40,17 @@ public class PostService {
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
         post.increaseViewCount();
         boolean isPostLiked = postLikeRepository.existsByPost_PostIdAndMember_MemberId(postId, currentMemberId);
-        return postDtoConverter.toPostResponseDto(post, currentMemberId, isPostLiked);
+        return PostDtoConverter.toPostResponseDto(post, imageService.getFullImgUrl(post.getImgUrl()), currentMemberId, isPostLiked);
     }
 
+    @Transactional
     public PostIdResponseDto createPost(PostRequestDto postRequestDto, Member currentMember) {
         Post post = new Post(postRequestDto, currentMember);
+        
         if(postRequestDto.getPostImage() != null){
             post.updateImageUrl(imageService.saveImg(postRequestDto.getPostImage()));
         }
-        return postDtoConverter.toPostIdResponseDto(postRepository.save(post).getPostId());
+        return PostDtoConverter.toPostIdResponseDto(postRepository.save(post).getPostId());
     }
 
     @Transactional
@@ -63,7 +63,7 @@ public class PostService {
         if(postRequestDto.getPostImage() != null){
             post.updateImageUrl(imageService.saveImg(postRequestDto.getPostImage()));
         }
-        return postDtoConverter.toPostIdResponseDto(post.getPostId());
+        return PostDtoConverter.toPostIdResponseDto(post.getPostId());
     }
 
     public void deletePost(Long postId) {

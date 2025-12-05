@@ -18,7 +18,6 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final ImageService imageService;
     private final AuthService authService;
-    private final MemberDtoConverter memberDtoConverter;
     private final PasswordEncoder passwordEncoder;
 
     public void signUp(SignUpRequestDto signUpRequestDto) {
@@ -36,7 +35,8 @@ public class MemberService {
     }
 
     public ProfileResponseDto getMyProfile() {
-        return memberDtoConverter.toProfileResponseDto(authService.getCurrentMember());
+
+        return MemberDtoConverter.toProfileResponseDto(authService.getCurrentMember(), imageService.getFullImgUrl(authService.getCurrentMember().getProfileImgUrl()));
     }
 
     @Transactional
@@ -55,10 +55,10 @@ public class MemberService {
     }
 
     public DuplicateCheckResponseDto emailDuplicateCheck(String email) {
-        return memberDtoConverter.toDuplicateCheckResponseDto(memberRepository.existsByEmail(email));
+        return MemberDtoConverter.toDuplicateCheckResponseDto(memberRepository.existsByEmail(email));
     }
 
     public DuplicateCheckResponseDto nicknameDuplicateCheck(String nickname) {
-        return memberDtoConverter.toDuplicateCheckResponseDto(memberRepository.existsByNickname(nickname));
+        return MemberDtoConverter.toDuplicateCheckResponseDto(memberRepository.existsByNickname(nickname));
     }
 }

@@ -10,6 +10,7 @@ import com.example.spring_practice.domain.member.entity.Member;
 import com.example.spring_practice.domain.member.repository.MemberRepository;
 import com.example.spring_practice.domain.post.entity.Post;
 import com.example.spring_practice.domain.post.repository.PostRepository;
+import com.example.spring_practice.domain.shared.ImageService;
 import com.example.spring_practice.global.response.CustomException;
 import com.example.spring_practice.global.response.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
-    private final CommentDtoConverter commentDtoConverter;
+    private final ImageService imageService;
 
     @Transactional
     public CommentResponseDto createComment(Long postId, CommentRequestDto commentRequestDto, Long currentMemberId) {
@@ -39,7 +40,7 @@ public class CommentService {
         Comment comment = new Comment(commentRequestDto, member, post);
         Comment savedComment = commentRepository.save(comment);
 
-        return commentDtoConverter.toCommentResponseDto(savedComment, currentMemberId);
+        return CommentDtoConverter.toCommentResponseDto(savedComment, imageService.getFullImgUrl(member.getProfileImgUrl()), currentMemberId);
     }
 
     @Transactional
@@ -49,7 +50,7 @@ public class CommentService {
 
         comment.updateContent(dto.getContent());
 
-        return commentDtoConverter.toCommentIdResponseDto(comment.getCommentId());
+        return CommentDtoConverter.toCommentIdResponseDto(comment.getCommentId());
     }
 
     @Transactional
@@ -64,7 +65,7 @@ public class CommentService {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
         List<CommentResponseDto> commentList = new ArrayList<>();
         for (Comment c : post.getCommentList()){
-            commentList.add(commentDtoConverter.toCommentResponseDto(c, currentMemberId));
+            commentList.add(CommentDtoConverter.toCommentResponseDto(c, imageService.getFullImgUrl(c.getMember().getProfileImgUrl()), currentMemberId));
         }
         return commentList;
     }
