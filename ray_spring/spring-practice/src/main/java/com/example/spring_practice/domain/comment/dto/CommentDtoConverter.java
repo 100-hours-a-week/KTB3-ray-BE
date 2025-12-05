@@ -10,18 +10,17 @@ import java.awt.*;
 @Component
 @RequiredArgsConstructor
 public class CommentDtoConverter {
-    private final ImageService imageService;
-    public CommentResponseDto toCommentResponseDto(Comment comment, Long currentMemberId){
+    static public CommentResponseDto toCommentResponseDto(Comment comment, String imgUrl, Long currentMemberId){
         return new CommentResponseDto(
                 comment.getCommentId(),
                 comment.getMember().getNickname(),
-                imageService.getFullImgUrl(comment.getMember().getProfileImgUrl()),
+                imgUrl,
                 comment.getCreatedAt(),
                 comment.getContent(),
                 comment.getMember().getMemberId().equals(currentMemberId));
     }
 
-    public CommentIdResponseDto toCommentIdResponseDto(Long commentId){
+    static public CommentIdResponseDto toCommentIdResponseDto(Long commentId){
         return new CommentIdResponseDto(commentId);
     }
 }
