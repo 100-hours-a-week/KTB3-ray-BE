@@ -31,25 +31,16 @@ public class MemberServiceTest {
     @Mock
     private AuthService authService;
     @Mock
-    private MemberDtoConverter memberDtoConverter;
-    @Mock
     private PasswordEncoder passwordEncoder;
-
     @InjectMocks
     private MemberService memberService;
 
-    @BeforeEach
-    void setUp() {
-        //when(memberDtoConverter.toDuplicateCheckResponseDto(true)).thenReturn(new DuplicateCheckResponseDto(true));
-        //when(memberDtoConverter.toDuplicateCheckResponseDto(false)).thenReturn(new DuplicateCheckResponseDto(false));
-    }
 
     @Test
     void 회원가입_이미지_없음_성공(){
         // Given
         when(memberRepository.existsByEmail(any())).thenReturn(false);
         when(memberRepository.existsByNickname(any())).thenReturn(false);
-        when(memberDtoConverter.toDuplicateCheckResponseDto(false)).thenReturn(new DuplicateCheckResponseDto(false));
         when(memberRepository.save(any())).thenReturn(new Member("","",""));
 
         // When
@@ -58,6 +49,7 @@ public class MemberServiceTest {
                 .password("Asdf1234@")
                 .nickname("asdf")
                 .build();
+
         memberService.signUp(signUpRequestDto);
 
         // Then
@@ -69,7 +61,6 @@ public class MemberServiceTest {
         // Given
         when(memberRepository.existsByEmail(any())).thenReturn(false);
         when(memberRepository.existsByNickname(any())).thenReturn(false);
-        when(memberDtoConverter.toDuplicateCheckResponseDto(false)).thenReturn(new DuplicateCheckResponseDto(false));
         when(memberRepository.save(any())).thenReturn(new Member("","",""));
         MockMultipartFile profileImage = new MockMultipartFile(
                 "profileImage",
@@ -95,7 +86,6 @@ public class MemberServiceTest {
     void 회원가입_이메일_중복_실패(){
         // Given
         when(memberRepository.existsByEmail(any())).thenReturn(true);
-        when(memberDtoConverter.toDuplicateCheckResponseDto(true)).thenReturn(new DuplicateCheckResponseDto(true));
 
         // When
         SignUpRequestDto signUpRequestDto = SignUpRequestDto.builder()
@@ -115,8 +105,6 @@ public class MemberServiceTest {
         // Given
         when(memberRepository.existsByEmail(any())).thenReturn(false);
         when(memberRepository.existsByNickname(any())).thenReturn(true);
-        when(memberDtoConverter.toDuplicateCheckResponseDto(true)).thenReturn(new DuplicateCheckResponseDto(true));
-        when(memberDtoConverter.toDuplicateCheckResponseDto(false)).thenReturn(new DuplicateCheckResponseDto(false));
 
         // When
         SignUpRequestDto signUpRequestDto = SignUpRequestDto.builder()
@@ -136,7 +124,8 @@ public class MemberServiceTest {
         // given
         String email = "test@test.com";
         String nickname = "테스트유저";
-        String profileImgUrl = "https://test/url";
+        String profileImgUrl = "testImg";
+        String fullProfileImgUrl = "https://testImg";
         Member member = Member.builder()
                 .email(email)
                 .nickname(nickname)
@@ -144,14 +133,13 @@ public class MemberServiceTest {
                 .build();
 
         when(authService.getCurrentMember()).thenReturn(member);
-        when(memberDtoConverter.toProfileResponseDto(member)).thenReturn(new ProfileResponseDto(email,nickname,profileImgUrl));
+        when(imageService.getFullImgUrl(member.getProfileImgUrl())).thenReturn(fullProfileImgUrl);
         // when
         ProfileResponseDto profileResponseDto = memberService.getMyProfile();
         // then
-        verify(memberDtoConverter, times(1)).toProfileResponseDto(authService.getCurrentMember());
         assertThat(profileResponseDto.getEmail()).isEqualTo(email);
         assertThat(profileResponseDto.getNickname()).isEqualTo(nickname);
-        assertThat(profileResponseDto.getProfileImage()).isEqualTo(profileImgUrl);
+        assertThat(profileResponseDto.getProfileImage()).isEqualTo(fullProfileImgUrl);
     }
 
     @Test
@@ -283,7 +271,7 @@ public class MemberServiceTest {
         // given
         String email = "test@gmail.com";
         when(memberRepository.existsByEmail(email)).thenReturn(false);
-        when(memberDtoConverter.toDuplicateCheckResponseDto(false)).thenReturn(new DuplicateCheckResponseDto(false));
+        //when(memberDtoConverter.toDuplicateCheckResponseDto(false)).thenReturn(new DuplicateCheckResponseDto(false));
 
         // when & then
         assertThat(memberService.emailDuplicateCheck(email).isDuplicated()).isFalse();
@@ -293,7 +281,7 @@ public class MemberServiceTest {
         // given
         String email = "test@gmail.com";
         when(memberRepository.existsByEmail(email)).thenReturn(true);
-        when(memberDtoConverter.toDuplicateCheckResponseDto(true)).thenReturn(new DuplicateCheckResponseDto(true));
+        //when(memberDtoConverter.toDuplicateCheckResponseDto(true)).thenReturn(new DuplicateCheckResponseDto(true));
 
         // when & then
         assertThat(memberService.emailDuplicateCheck(email).isDuplicated()).isTrue();
@@ -304,7 +292,7 @@ public class MemberServiceTest {
         // given
         String nickname = "unique";
         when(memberRepository.existsByNickname(nickname)).thenReturn(false);
-        when(memberDtoConverter.toDuplicateCheckResponseDto(false)).thenReturn(new DuplicateCheckResponseDto(false));
+        //when(memberDtoConverter.toDuplicateCheckResponseDto(false)).thenReturn(new DuplicateCheckResponseDto(false));
 
         // when & then
         assertThat(memberService.nicknameDuplicateCheck(nickname).isDuplicated()).isFalse();
@@ -314,7 +302,7 @@ public class MemberServiceTest {
         // given
         String nickname = "common";
         when(memberRepository.existsByNickname(nickname)).thenReturn(true);
-        when(memberDtoConverter.toDuplicateCheckResponseDto(true)).thenReturn(new DuplicateCheckResponseDto(true));
+        //when(memberDtoConverter.toDuplicateCheckResponseDto(true)).thenReturn(new DuplicateCheckResponseDto(true));
 
         // when & then
         assertThat(memberService.nicknameDuplicateCheck(nickname).isDuplicated()).isTrue();
