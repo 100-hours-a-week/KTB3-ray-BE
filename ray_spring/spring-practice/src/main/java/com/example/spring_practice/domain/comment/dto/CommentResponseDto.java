@@ -22,5 +22,5 @@ public class CommentResponseDto {
     @Schema(description = "댓글 내용", example = "이사람 강도야~")
     private String content;
     @Schema(description = "내가 작성자인지 여부", example = "true")
-    private boolean isMine;
+    private boolean mine;
 }

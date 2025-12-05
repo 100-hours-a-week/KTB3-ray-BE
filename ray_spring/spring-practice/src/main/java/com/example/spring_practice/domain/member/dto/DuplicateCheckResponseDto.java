@@ -10,5 +10,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class DuplicateCheckResponseDto {
     @Schema(description = "중복 여부", example = "true")
-    private boolean isDuplicated;
+    private boolean duplicated;
 }
