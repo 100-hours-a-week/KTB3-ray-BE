@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
@@ -44,9 +45,12 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentIdResponseDto updateComment(Long commentId, CommentRequestDto dto) {
+    public CommentIdResponseDto updateComment(Long postId, Long commentId, CommentRequestDto dto) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
+        if (!comment.getPost().getPostId().equals(postId)) {
+            throw new CustomException(ErrorCode.COMMENT_NOT_FOUND);
+        }
 
         comment.updateContent(dto.getContent());
 
@@ -54,10 +58,13 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(Long commentId) {
+    public void deleteComment(Long postId, Long commentId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
 
+        if (!comment.getPost().getPostId().equals(postId)) {
+            throw new CustomException(ErrorCode.COMMENT_NOT_FOUND);
+        }
         commentRepository.delete(comment);
     }
 
