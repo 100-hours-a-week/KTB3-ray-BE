@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
 public class EditProfileRequestDto {
     @Schema(description = "변경할 닉네임", example = "김초코", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private String nickname;
