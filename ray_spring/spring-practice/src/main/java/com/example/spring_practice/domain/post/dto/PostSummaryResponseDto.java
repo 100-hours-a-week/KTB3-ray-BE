@@ -2,12 +2,14 @@ package com.example.spring_practice.domain.post.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-@AllArgsConstructor
 @Getter
+@Builder
+@AllArgsConstructor
 public class PostSummaryResponseDto {
     @Schema(description = "게시글 ID", example = "1")
     private Long postId;
@@ -26,5 +28,5 @@ public class PostSummaryResponseDto {
     @Schema(description = "게시글 댓글수", example = "5")
     private long commentCount;
     @Schema(description = "내가 좋아요 눌렀는지 여부", example = "true")
-    private boolean isPostLiked;
+    private boolean postLiked;
 }

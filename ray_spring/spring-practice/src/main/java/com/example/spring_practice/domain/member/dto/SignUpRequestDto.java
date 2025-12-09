@@ -1,15 +1,18 @@
 package com.example.spring_practice.domain.member.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Setter
 public class SignUpRequestDto {
     @Schema(description = "이메일", example = "example@gmail.com", requiredMode = Schema.RequiredMode.REQUIRED)

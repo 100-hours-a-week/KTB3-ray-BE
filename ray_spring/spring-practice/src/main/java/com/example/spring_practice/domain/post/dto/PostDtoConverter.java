@@ -14,35 +14,34 @@ import java.util.List;
 @RequiredArgsConstructor
 @Component
 public class PostDtoConverter {
-    private final ImageService imageService;
-    public PostSummaryResponseDto toPostSummaryResponseDto(Post post,boolean isPostLiked){
+    static public PostSummaryResponseDto toPostSummaryResponseDto(Post post,String imgUrl, boolean isPostLiked){
         return new PostSummaryResponseDto(
                 post.getPostId(),
                 post.getTitle(),
                 post.getCreatedAt(),
                 post.getMember().getNickname(),
-                imageService.getFullImgUrl(post.getMember().getProfileImgUrl()),
+                imgUrl,
                 post.getPostLikeList().size(),
                 post.getViewCount(),
                 post.getCommentList().size(),
                 isPostLiked
         );
     }
-    public PostDetailsResponseDto toPostDetailsResponseDto(Post post, Long currentMemberId){
+    static public PostDetailsResponseDto toPostDetailsResponseDto(Post post, String imgUrl, Long currentMemberId){
         return new PostDetailsResponseDto(
-                imageService.getFullImgUrl(post.getImgUrl()),
+                imgUrl,
                 post.getContent(),
                 post.getMember().getMemberId().equals(currentMemberId)
         );
     }
-    public PostResponseDto toPostResponseDto(Post post, Long currentMemberId, boolean isPostLiked){
+    static public PostResponseDto toPostResponseDto(Post post, String imgUrl, Long currentMemberId, boolean isPostLiked){
         return new PostResponseDto(
-                toPostSummaryResponseDto(post, isPostLiked),
-                toPostDetailsResponseDto(post, currentMemberId)
+                toPostSummaryResponseDto(post, imgUrl, isPostLiked),
+                toPostDetailsResponseDto(post, imgUrl, currentMemberId)
         );
     }
 
-    public PostIdResponseDto toPostIdResponseDto(Long postId){
+    static public PostIdResponseDto toPostIdResponseDto(Long postId){
         return new PostIdResponseDto(postId);
     }
 }

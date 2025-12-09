@@ -6,15 +6,15 @@ import com.example.spring_practice.domain.post.entity.PostLike;
 import com.example.spring_practice.global.response.CustomException;
 import com.example.spring_practice.global.response.ErrorCode;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Entity
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
     @Id
@@ -47,10 +47,6 @@ public class Member {
     public void updateImageUrl(String profileImgUrl) { this.profileImgUrl = profileImgUrl; }
 
     public void editPassword(String password) {
-        String regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&#])[A-Za-z\\d@$!%*?&#]{8,20}$";
-        if (password == null || !password.matches(regexp)) {
-            throw new CustomException(ErrorCode.INVALID_PASSWORD_FORM);
-        }
         this.password = password;
     }
 

@@ -2,13 +2,13 @@ package com.example.spring_practice.domain.post.entity;
 
 import com.example.spring_practice.domain.member.entity.Member;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@AllArgsConstructor
 public class PostLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

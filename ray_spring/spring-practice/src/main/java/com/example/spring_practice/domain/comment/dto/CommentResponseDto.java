@@ -2,11 +2,13 @@ package com.example.spring_practice.domain.comment.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@Builder
 @AllArgsConstructor
 public class CommentResponseDto {
     @Schema(description = "댓글ID", example = "1")
@@ -20,5 +22,5 @@ public class CommentResponseDto {
     @Schema(description = "댓글 내용", example = "이사람 강도야~")
     private String content;
     @Schema(description = "내가 작성자인지 여부", example = "true")
-    private boolean isMine;
+    private boolean mine;
 }

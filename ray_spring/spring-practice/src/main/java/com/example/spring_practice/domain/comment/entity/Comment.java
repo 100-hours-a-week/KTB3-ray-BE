@@ -6,9 +6,7 @@ import com.example.spring_practice.domain.post.entity.Post;
 import com.example.spring_practice.global.response.CustomException;
 import com.example.spring_practice.global.response.ErrorCode;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -16,6 +14,8 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@AllArgsConstructor
 public class Comment {
 
     @Id
@@ -44,11 +44,5 @@ public class Comment {
     }
     public void updateContent(String content){
         this.content = content;
-    }
-    public void setCommentId(Long id){
-        if( this.commentId != null || id == null || id < 0){
-            throw new CustomException(ErrorCode.SERVER_ERROR);
-        }
-        this.commentId = id;
     }
 }

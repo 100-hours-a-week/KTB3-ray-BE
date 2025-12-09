@@ -14,13 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MemberService {
     private final MemberRepository memberRepository;
     private final ImageService imageService;
     private final AuthService authService;
-    private final MemberDtoConverter memberDtoConverter;
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional
     public void signUp(SignUpRequestDto signUpRequestDto) {
         if(emailDuplicateCheck(signUpRequestDto.getEmail()).isDuplicated()){
             throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
@@ -36,12 +37,13 @@ public class MemberService {
     }
 
     public ProfileResponseDto getMyProfile() {
-        return memberDtoConverter.toProfileResponseDto(authService.getCurrentMember());
+
+        return MemberDtoConverter.toProfileResponseDto(authService.getCurrentMember(), imageService.getFullImgUrl(authService.getCurrentMember().getProfileImgUrl()));
     }
 
     @Transactional
     public void editPassword(EditPasswordRequestDto password) {
-        authService.getCurrentMember().editPassword(password.getPassword());
+        authService.getCurrentMember().editPassword(passwordEncoder.encode(password.getPassword()));
     }
 
     @Transactional
@@ -55,10 +57,10 @@ public class MemberService {
     }
 
     public DuplicateCheckResponseDto emailDuplicateCheck(String email) {
-        return memberDtoConverter.toDuplicateCheckResponseDto(memberRepository.existsByEmail(email));
+        return MemberDtoConverter.toDuplicateCheckResponseDto(memberRepository.existsByEmail(email));
     }
 
     public DuplicateCheckResponseDto nicknameDuplicateCheck(String nickname) {
-        return memberDtoConverter.toDuplicateCheckResponseDto(memberRepository.existsByNickname(nickname));
+        return MemberDtoConverter.toDuplicateCheckResponseDto(memberRepository.existsByNickname(nickname));
     }
 }
