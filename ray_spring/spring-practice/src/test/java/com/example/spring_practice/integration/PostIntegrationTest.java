@@ -41,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-//@Transactional
+@Transactional
 @ActiveProfiles("test")
 public class PostIntegrationTest {
     @Autowired
@@ -54,8 +54,6 @@ public class PostIntegrationTest {
     private PostRepository postRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
-    @Autowired
-    private ImageService imageService;
     @Autowired
     private PostLikeRepository postLikeRepository;
     @Autowired
@@ -98,12 +96,10 @@ public class PostIntegrationTest {
 
         em.flush();
         em.clear();
-        assertThat(postRepository.findAll().size()).isEqualTo(2);
     }
 
     @Test
     @WithMockUser("post1@test.com")
-    @Transactional
     void 글_목록_불러오기_성공_200() throws Exception {
         // given
         PostLike postLike = PostLike.builder()
@@ -134,7 +130,6 @@ public class PostIntegrationTest {
 
     @Test
     @WithMockUser("post1@test.com")
-    @Transactional
     void 글_상세보기_성공_200() throws Exception {
         // given
         Long postId = postRepository.findAll().get(0).getPostId();
@@ -158,8 +153,7 @@ public class PostIntegrationTest {
 
     @Test
     @WithMockUser("post1@test.com")
-    @Transactional
-    void 글_상세보기_없음_실패_404() throws Exception {
+    void 글_상세보기_게시글_없음_실패_404() throws Exception {
         Long postId = -1L;
         mockMvc.perform(get("/posts/"+postId))
                 .andExpect(status().isNotFound())
@@ -168,7 +162,6 @@ public class PostIntegrationTest {
 
     @Test
     @WithMockUser("post1@test.com")
-    @Transactional
     void 글작성_이미지없음_성공_201() throws Exception {
         // given
         String title = "test title";
@@ -192,7 +185,6 @@ public class PostIntegrationTest {
 
     @Test
     @WithMockUser("post1@test.com")
-    @Transactional
     void 글작성_이미지있음_성공_201() throws Exception {
         // given
         MockMultipartFile profileImage = new MockMultipartFile(
@@ -224,7 +216,6 @@ public class PostIntegrationTest {
 
     @Test
     @WithMockUser("post1@test.com")
-    @Transactional
     void 글수정_이미지_수정_성공_200() throws Exception {
         // given
         MockMultipartFile newPostImage = new MockMultipartFile(
@@ -250,8 +241,7 @@ public class PostIntegrationTest {
 
     @Test
     @WithMockUser("post1@test.com")
-    @Transactional
-    void 글수정_글_내용_수정_성공_200() throws Exception {
+    void 글수정_내용_수정_성공_200() throws Exception {
         // given
         Post originalPost = postRepository.findAll().get(0);
         Long postId = originalPost.getPostId();
@@ -269,8 +259,7 @@ public class PostIntegrationTest {
 
     @Test
     @WithMockUser("post1@test.com")
-    @Transactional
-    void 글수정_이미지_글_내용_수정_성공_200() throws Exception {
+    void 글수정_이미지_내용_수정_성공_200() throws Exception {
         // given
         MockMultipartFile newPostImage = new MockMultipartFile(
                 "postImage",
@@ -295,7 +284,6 @@ public class PostIntegrationTest {
 
     @Test
     @WithMockUser("post1@test.com")
-    @Transactional
     void 글수정_권한없음_실패_403() throws Exception {
         // given
         Post notMyPost = postRepository.findAll().get(1);
@@ -316,7 +304,6 @@ public class PostIntegrationTest {
 
     @Test
     @WithMockUser("post1@test.com")
-    @Transactional
     void 글삭제_성공_200() throws Exception {
         // given
         Post myPost = postRepository.findAll().get(0);
@@ -330,7 +317,6 @@ public class PostIntegrationTest {
 
     @Test
     @WithMockUser("post1@test.com")
-    @Transactional
     void 글삭제_권한없음_실패_403()throws Exception {
         // given
         Post notMyPost = postRepository.findAll().get(1);
@@ -344,7 +330,6 @@ public class PostIntegrationTest {
 
     @Test
     @WithMockUser("post1@test.com")
-    @Transactional
     void 글_좋아요_성공_200() throws Exception {
         // given
         Post post = postRepository.findAll().get(0);
@@ -359,7 +344,6 @@ public class PostIntegrationTest {
 
     @Test
     @WithMockUser("post1@test.com")
-    @Transactional
     void 글_좋아요_글없음_실패_404() throws Exception {
         // given
         Long invalidPostId = -1L;
@@ -374,7 +358,6 @@ public class PostIntegrationTest {
 
     @Test
     @WithMockUser("post1@test.com")
-    @Transactional
     void 글_좋아요_중복_실패_409() throws Exception {
         // given
         Post post = postRepository.findAll().get(0);
@@ -393,7 +376,6 @@ public class PostIntegrationTest {
 
     @Test
     @WithMockUser("post1@test.com")
-    @Transactional
     void 글_좋아요_취소_성공_200() throws Exception {
         // given
         Post post = postRepository.findAll().get(0);
@@ -412,7 +394,6 @@ public class PostIntegrationTest {
 
     @Test
     @WithMockUser("post1@test.com")
-    @Transactional
     void 글_좋아요_취소_없음_실패_404() throws Exception {
         // given
         Post post = postRepository.findAll().get(0);
