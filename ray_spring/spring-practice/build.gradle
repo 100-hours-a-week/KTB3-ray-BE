@@ -50,6 +50,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.security:spring-security-crypto:5.7.1'
 
+    // 테스트 위한 h2 데이터베이스
+    testImplementation 'com.h2database:h2'
+
 }
 
 tasks.named('test') {
