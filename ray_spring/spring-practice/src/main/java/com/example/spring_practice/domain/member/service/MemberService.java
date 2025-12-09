@@ -14,12 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MemberService {
     private final MemberRepository memberRepository;
     private final ImageService imageService;
     private final AuthService authService;
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional
     public void signUp(SignUpRequestDto signUpRequestDto) {
         if(emailDuplicateCheck(signUpRequestDto.getEmail()).isDuplicated()){
             throw new CustomException(ErrorCode.DUPLICATE_EMAIL);

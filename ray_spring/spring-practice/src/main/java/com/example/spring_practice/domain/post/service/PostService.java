@@ -18,12 +18,12 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PostService {
     private final PostRepository postRepository;
     private final ImageService imageService;
     private final PostLikeRepository postLikeRepository;
 
-    @Transactional(readOnly = true)
     public List<PostSummaryResponseDto> getPostList(Long currentMemberId) {
         List<Post> posts = postRepository.findAllWithMember();
         List<PostSummaryResponseDto> postSummaryResponseDtos = new ArrayList<>();
@@ -34,7 +34,6 @@ public class PostService {
         return postSummaryResponseDtos;
     }
 
-    @Transactional
     public PostResponseDto getPostDetail(Long postId, Long currentMemberId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
@@ -66,6 +65,7 @@ public class PostService {
         return PostDtoConverter.toPostIdResponseDto(post.getPostId());
     }
 
+    @Transactional
     public void deletePost(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
@@ -73,6 +73,7 @@ public class PostService {
         postRepository.delete(post);
     }
 
+    @Transactional
     public void createPostLike(Long postId, Member currentMember) {
         if(!postLikeRepository.existsByPost_PostIdAndMember_MemberId(postId, currentMember.getMemberId())){
             Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));

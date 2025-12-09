@@ -21,12 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AuthService {
     private final MemberRepository memberRepository;
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
 
-    @Transactional
     public JwtTokenResponseDto login(LoginRequestDto loginRequestDto) {
         try {
             Authentication authRequest =
